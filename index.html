@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Básica</title>
+    <!-- Bootstrap local -->
+    <link href="./bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #6bc8a3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Calculadora Básica Luis Flores</h1>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <calculadora-basica id="miCalcu"></calculadora-basica>
+            </div>
+        </div>
+        
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div id="eventos-log" class="overflow-auto" style="max-height: 200px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./calculadora-basica.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const calculadora = document.getElementById('miCalcu');
+            const eventosLog = document.getElementById('eventos-log');
+            
+            calculadora.addEventListener('calculo-realizado', (event) => {
+                const { detail } = event;
+                const logItem = document.createElement('div');
+                logItem.className = 'mb-2';
+                
+                if (detail.error) {
+                    logItem.innerHTML = `
+                        <div class="text-danger">
+                            <strong>Error:</strong> ${detail.error} (${detail.operacion} con ${detail.numero1} y ${detail.numero2})
+                        </div>
+                        <small class="text-muted">${new Date(detail.timestamp).toLocaleTimeString()}</small>
+                    `;
+                } else {
+                    logItem.innerHTML = `
+                        <div>
+                            <strong>Operación:</strong> ${detail.numero1} ${this.getOperador(detail.operacion)} ${detail.numero2} = ${detail.resultado}
+                        </div>
+                        <small class="text-muted">${new Date(detail.timestamp).toLocaleTimeString()}</small>
+                    `;
+                }
+                
+                eventosLog.prepend(logItem);
+            });
+            
+            // Helper para mostrar el operador
+            function getOperador(operacion) {
+                const operadores = {
+                    'suma': '+',
+                    'resta': '-',
+                    'multiplicacion': '×',
+                    'division': '÷'
+                };
+                return operadores[operacion] || operacion;
+            }
+        });
+    </script>
+</body>
+</html>
